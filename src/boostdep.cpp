@@ -2200,7 +2200,7 @@ static void output_module_cmake_report( std::string module )
             "add_library(boost_" << lm << " INTERFACE)\n"
             "add_library(Boost::" << lm << " ALIAS boost_" << lm << ")\n"
             "\n"
-            "target_include_directories(boost_" << lm << " INTERFACE include)\n"
+            "target_include_directories(boost_" << lm << " INTERFACE $<BUILD_INTERFACE:include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDE_DIR}>)\n"
             "\n"
         ;
 
@@ -2252,7 +2252,7 @@ static void output_module_cmake_report( std::string module )
             "\n"
             "add_library(Boost::" << lm << " ALIAS boost_" << lm << ")\n"
             "\n"
-            "target_include_directories(boost_" << lm << " PUBLIC include)\n"
+            "target_include_directories(boost_" << lm << " PUBLIC $<BUILD_INTERFACE:include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDE_DIR}>)\n"
             "\n"
         ;
 
@@ -2331,6 +2331,18 @@ static void output_module_cmake_report( std::string module )
             "\n"
         ;
     }
+
+    std::cout <<
+
+        "set_target_properties(boost_" << lm << " PROPERTIES EXPORT_NAME " << lm << ")\n"
+        "\n"
+        "include(GNUInstallDirs)"
+        "\n"
+        "install(TARGETS boost_" << lm << " EXPORT " << lm << "Targets)\n"
+        "install(DIRECTORY include/ DESTINATION \"${CMAKE_INSTALL_INCLUDEDIR}\")\n"
+        "install(EXPORT " << lm << "Targets DESTINATION \"${CMAKE_INSTALL_LIBDIR}/cmake/" << lm << "\" NAMESPACE \"Boost::\")\n"
+        "\n"
+    ;
 
     std::cout <<
 
